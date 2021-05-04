@@ -7,7 +7,6 @@ fn test_new_list_is_empty() {
 }
 
 #[test]
-#[ignore]
 fn test_push_increments_length() {
     let mut list: SimpleLinkedList<u32> = SimpleLinkedList::new();
     list.push(1);
@@ -17,7 +16,6 @@ fn test_push_increments_length() {
 }
 
 #[test]
-#[ignore]
 fn test_pop_decrements_length() {
     let mut list: SimpleLinkedList<u32> = SimpleLinkedList::new();
     list.push(1);
@@ -29,7 +27,6 @@ fn test_pop_decrements_length() {
 }
 
 #[test]
-#[ignore]
 fn test_is_empty() {
     let mut list: SimpleLinkedList<u32> = SimpleLinkedList::new();
     assert!(list.is_empty(), "List wasn't empty on creation");
