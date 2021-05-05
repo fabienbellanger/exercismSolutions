@@ -1,10 +1,11 @@
 use std::iter::FromIterator;
 
+#[derive(Debug)]
 pub struct SimpleLinkedList<T> {
     head: Option<Box<Node<T>>>,
     length: usize,
 }
-
+#[derive(Debug, Clone)]
 struct Node<T> {
     data: T,
     next: Option<Box<Node<T>>>,
@@ -28,22 +29,25 @@ impl<T> SimpleLinkedList<T> {
         self.length
     }
 
-    pub fn push(&mut self, _element: T) {
+    pub fn push(&mut self, data: T) {
+        self.head = Some(Box::new(Node {
+            data: data,
+            next: self.head.take(),
+        }));
+        
         self.length += 1;
-
-        // TODO: Add push
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        self.length -= 1;
-
-        // TODO: Add pop
-
-        None
+        self.head.take().and_then(|head| {
+            self.head = head.next;
+            self.length -= 1;
+            Some(head.data)
+        })
     }
 
     pub fn peek(&self) -> Option<&T> {
-        unimplemented!()
+        self.head.as_ref().map(|head| &head.data)
     }
 
     pub fn rev(self) -> SimpleLinkedList<T> {
