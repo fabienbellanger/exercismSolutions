@@ -1,17 +1,17 @@
 use std::iter::FromIterator;
 
-#[derive(Debug)]
-pub struct SimpleLinkedList<T> {
+#[derive(Debug, Clone)]
+pub struct SimpleLinkedList<T: Clone> {
     head: Option<Box<Node<T>>>,
     length: usize,
 }
 #[derive(Debug, Clone)]
-struct Node<T> {
+struct Node<T: Clone> {
     data: T,
     next: Option<Box<Node<T>>>,
 }
 
-impl<T> SimpleLinkedList<T> {
+impl<T: Clone> SimpleLinkedList<T> {
     pub fn new() -> Self {
         Self { head: None, length: 0 }
     }
@@ -51,13 +51,26 @@ impl<T> SimpleLinkedList<T> {
     }
 
     pub fn rev(self) -> SimpleLinkedList<T> {
-        unimplemented!()
+        let mut reverse_list = SimpleLinkedList::new();
+        let mut list = self.clone();
+
+        while list.peek().is_some() {
+            reverse_list.push(list.pop().unwrap());
+        }
+
+        reverse_list
     }
 }
 
-impl<T> FromIterator<T> for SimpleLinkedList<T> {
-    fn from_iter<I: IntoIterator<Item = T>>(_iter: I) -> Self {
-        unimplemented!()
+impl<T: Clone> FromIterator<T> for SimpleLinkedList<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let mut simple_linked_list = Self::new();
+
+        for i in iter {
+            simple_linked_list.push(i);
+        }
+
+        simple_linked_list
     }
 }
 
@@ -72,8 +85,15 @@ impl<T> FromIterator<T> for SimpleLinkedList<T> {
 // of IntoIterator is that implementing that interface is fairly complicated, and
 // demands more of the student than we expect at this point in the track.
 
-impl<T> Into<Vec<T>> for SimpleLinkedList<T> {
+impl<T: Clone> Into<Vec<T>> for SimpleLinkedList<T> {
     fn into(self) -> Vec<T> {
-        unimplemented!()
+        let mut v = Vec::new();
+        let mut list = self.clone().rev();
+
+        while list.peek().is_some() {
+            v.push(list.pop().unwrap());
+        }
+
+        v
     }
 }
