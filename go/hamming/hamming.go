@@ -9,10 +9,6 @@ func Distance(a, b string) (d int, err error) {
 		return
 	}
 
-	if a == "" {
-		return
-	}
-
 	for i := range a {
 		if a[i] != b[i] {
 			d++
