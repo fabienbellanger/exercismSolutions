@@ -20,7 +20,7 @@ pub fn count(nucleotide: char, dna: &str) -> Result<usize, char> {
 }
 
 pub fn nucleotide_counts(dna: &str) -> Result<HashMap<char, usize>, char> {
-    let mut counts = HashMap::new();
+    let mut counts = HashMap::with_capacity(NUCLEOTIDES.len());
 
     for n in NUCLEOTIDES.iter() {
         let c = count(*n, dna)?;
