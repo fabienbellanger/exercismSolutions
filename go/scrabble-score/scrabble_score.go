@@ -34,8 +34,7 @@ var point map[rune]int = map[rune]int{
 }
 
 func Score(input string) (total int) {
-	s := strings.ToUpper(input)
-	for _, c := range s {
+	for _, c := range strings.ToUpper(input) {
 		if score, ok := point[c]; ok {
 			total += score
 		}
