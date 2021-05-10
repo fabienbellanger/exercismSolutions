@@ -4,33 +4,40 @@ import (
 	"strings"
 )
 
-var points map[int][]rune = map[int][]rune{
-	1:  {'A', 'E', 'I', 'O', 'U', 'L', 'N', 'R', 'S', 'T'},
-	2:  {'D', 'G'},
-	3:  {'B', 'C', 'M', 'P'},
-	4:  {'F', 'H', 'V', 'W', 'Y'},
-	5:  {'K'},
-	8:  {'J', 'X'},
-	10: {'Q', 'Z'},
+var point map[rune]int = map[rune]int{
+	'A': 1,
+	'B': 3,
+	'C': 3,
+	'D': 2,
+	'E': 1,
+	'F': 4,
+	'G': 2,
+	'H': 4,
+	'I': 1,
+	'J': 8,
+	'K': 5,
+	'L': 1,
+	'M': 3,
+	'N': 1,
+	'O': 1,
+	'P': 3,
+	'Q': 10,
+	'R': 1,
+	'S': 1,
+	'T': 1,
+	'U': 1,
+	'V': 4,
+	'W': 4,
+	'X': 8,
+	'Y': 4,
+	'Z': 10,
 }
 
-func Score(input string) (score int) {
+func Score(input string) (total int) {
 	s := strings.ToUpper(input)
 	for _, c := range s {
-		if c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U' || c == 'L' || c == 'N' || c == 'R' || c == 'S' || c == 'T' {
-			score += 1
-		} else if c == 'D' || c == 'G' {
-			score += 2
-		} else if c == 'B' || c == 'C' || c == 'M' || c == 'P' {
-			score += 3
-		} else if c == 'F' || c == 'H' || c == 'V' || c == 'W' || c == 'Y' {
-			score += 4
-		} else if c == 'K' {
-			score += 5
-		} else if c == 'J' || c == 'X' {
-			score += 8
-		} else if c == 'Q' || c == 'Z' {
-			score += 10
+		if score, ok := point[c]; ok {
+			total += score
 		}
 	}
 	return
