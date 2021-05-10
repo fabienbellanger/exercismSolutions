@@ -46,4 +46,8 @@ var stringTestCases = []acronymTest{
 		input:    "The Road _Not_ Taken",
 		expected: "TRNT",
 	},
+	{
+		input:    "HyperText Markup Language",
+		expected: "HTML",
+	},
 }
