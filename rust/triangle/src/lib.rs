@@ -1,19 +1,23 @@
-use std::cmp::Ordering;
 use std::fmt::Debug;
 use std::cmp::PartialOrd;
 
 #[derive(Debug)]
 pub struct Triangle<T> 
-where T: Debug + PartialOrd {
+where T: Debug + PartialOrd + Default {
     sides: [T; 3],
 }
 
 impl<T> Triangle<T>
-where T: Debug + PartialOrd {
+where T: Debug + PartialOrd + Default {
     pub fn build(sides: [T; 3]) -> Option<Triangle<T>> {
-        if sides.iter().any(|s|  (*s).partial_cmp(&0).is_some()) {
-
-        }
+        dbg!(T::default());
+        // if sides.iter().any(|s|  (*s).partial_cmp(&T::default()).is_some()) {
+        //     return None;
+        // }
+        // Some(Self{
+        //     sides
+        // })
+        None
     }
 
     pub fn is_equilateral(&self) -> bool {
