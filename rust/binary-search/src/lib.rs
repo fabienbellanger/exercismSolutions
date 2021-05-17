@@ -4,7 +4,7 @@ pub fn find<S: AsRef<[T]>, T: Ord>(array: S, key: T) -> Option<usize> {
     let mut sub = array.as_ref();
     let mut index = 0;
 
-    while sub.len() >= 1 {
+    while !sub.is_empty() {
         if sub.len() == 1 && sub[0] != key {
             return None;
         }
