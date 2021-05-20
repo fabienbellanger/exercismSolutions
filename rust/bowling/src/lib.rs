@@ -32,30 +32,73 @@ pub enum Error {
     GameComplete,
 }
 
-#[derive(Debug, Copy, Clone)]
-struct BowlingFrame {
-    is_open: bool,
-    is_strike: bool,
-    is_spare: bool,
-    pins: [Option<u16>; 3],
-}
-
 #[derive(Debug)]
 pub struct BowlingGame {
-    frames: [Option<BowlingFrame>; 10],
+    frames: Vec<Vec<u16>>,
 }
 
 impl BowlingGame {
     pub fn new() -> Self {
-        Self { frames: [None; 10] }
+        Self { frames: Vec::with_capacity(10) }
     }
 
     pub fn roll(&mut self, pins: u16) -> Result<(), Error> {
         if self.is_finished() {
             return Err(Error::GameComplete);
         }
+        if pins > 10 {
+            return Err(Error::NotEnoughPinsLeft);
+        }
 
-        // TODO: Update frames
+        let frames_length = self.frames.len();
+        if frames_length == 0 {
+            // First time
+            // ----------
+            self.frames.push(vec![pins]);
+        } else {
+            let frame = &self.frames[frames_length - 1];
+            let frame_length = frame.len();
+
+            if frames_length < 10 {
+                // 9 premières frames
+                if frame_length == 0 {
+                    // 1er lancer
+                    self.frames[frames_length - 1].push(pins);
+                } else if frame_length == 1 {
+                    // 2ème lancer
+                    if frame[0] == 10 {
+                        // Strike => next frame
+                        self.frames.push(vec![pins]);
+                    } else if frame[0] + pins <= 10 {
+                        // Add frame
+                        self.frames[frames_length - 1].push(pins);
+                    } else {
+                        return Err(Error::NotEnoughPinsLeft);
+                    }
+                } else {
+                    self.frames.push(vec![pins]);
+                }
+            } else {
+                // Dernière frame
+                if frame_length == 0 {
+                    // 1er lancer
+                    self.frames[frames_length - 1].push(pins);
+                } else if frame_length == 1 {
+                    if frame[0] == 10 || frame[0] + pins <= 10 {
+                        self.frames[frames_length - 1].push(pins);
+                    } else {
+                        return Err(Error::NotEnoughPinsLeft);
+                    }
+                } else {
+                    if frame[1] == 10 || frame[0] + frame[1] == 10 {
+                        // Strike ou spare
+                        self.frames[frames_length - 1].push(pins);
+                    }
+                }
+            }
+        }
+
+        // dbg!(&self);
 
         Ok(())
     }
@@ -65,20 +108,36 @@ impl BowlingGame {
             return None;
         }
         
-        // TODO: Calculate the score
-        Some(0)
+        let mut score: u16 = 0;
+        self.frames.iter().enumerate().for_each(|(index, frame)| {
+            let sum: u16 = frame.iter().sum();
+            score += sum;
+            
+            // 9 premières frames
+            if index < 9 {
+                if frame[0] == 10 {
+                    // Strike
+                    score += self.frames[index + 1][0];
+                    println!("Strike 1 : {} = {}", self.frames[index + 1][0], score);
+                    if self.frames[index + 1].len() >= 2 {
+                        score += self.frames[index + 1][1];
+                        println!("Strike 2 : {} = {}", self.frames[index + 1][1], score);
+                    } else {
+                        score += self.frames[index + 2][0];
+                        println!("Strike 3 : {} = {}", self.frames[index + 2][0], score);
+                    }
+                } else if sum == 10 {
+                    // Spare
+                    score += self.frames[index + 1][0]; 
+                }
+            }
+        });
+        Some(score)
     }
 
     fn is_finished(&self) -> bool {
-        self.frames
-            .iter()
-            .all(|frame| {
-                if let Some(f) = frame {
-                    if !f.is_open {
-                        return true;
-                    }
-                }
-                false
-            })
+        self.frames.len() == 10 && 
+            (self.frames[9].len() == 3 || 
+                self.frames[9].len() == 2 && self.frames[9][0] + self.frames[9][1] < 10)
     }
 }
