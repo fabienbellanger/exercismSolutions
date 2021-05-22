@@ -12,8 +12,7 @@ func Valid(input string) bool {
 	}
 
 	sum := 0
-	j := 0
-	for i := len(input) - 1; i >= 0; i-- {
+	for i, j := len(input)-1, 0; i >= 0; i-- {
 		n, err := strconv.Atoi(string(input[i]))
 		if err != nil {
 			return false
@@ -22,13 +21,13 @@ func Valid(input string) bool {
 		if j%2 != 0 {
 			d := 2 * n
 			if d <= 9 {
-				sum += d
+				n = d
 			} else {
-				sum += d - 9
+				n = d - 9
 			}
-		} else {
-			sum += n
 		}
+		sum += n
+
 		j++
 	}
 
