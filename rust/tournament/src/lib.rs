@@ -1,15 +1,5 @@
 use std::collections::HashMap;
 
-// Input: 
-// Team1;Team2;{win|loss|draw}
-// Devastating Donkeys;Courageous Californians;draw
-// Devastating Donkeys;Allegoric Alaskans;win
-// Courageous Californians;Blithering Badgers;loss
-//
-// Output table:
-// {Team: 30} | MP |  W |  D |  L |  P
-// {Team: 30} |  4 |  2 |  1 |  1 |  7
-
 #[derive(Debug)]
 enum Score {
     Win,
@@ -37,7 +27,7 @@ impl Match {
                 "win" => Score::Win,
                 "loss" => Score::Loss,
                 "draw" => Score::Draw,
-                _ => panic!("Invalid match result {}", result)
+                _ => panic!("Invalid match result {}", result),
             },
         }
     }
@@ -45,7 +35,6 @@ impl Match {
 
 #[derive(Debug, Clone)]
 struct Team {
-    name: String,
     matchs_played: usize,
     matchs_won: usize,
     matchs_drawn: usize,
@@ -53,9 +42,8 @@ struct Team {
 }
 
 impl Team {
-    fn new(name: String) -> Self {
+    fn new() -> Self {
         Self {
-            name,
             matchs_played: 0,
             matchs_won: 0,
             matchs_drawn: 0,
@@ -70,62 +58,95 @@ struct Tournament {
 }
 
 impl Tournament {
-    fn update_team(self, a_match: Match) -> Self {
-        let mut tournament = self.clone();
+    fn new() -> Self {
+        Self {
+            teams: HashMap::new(),
+        }
+    }
 
+    fn update_team(&mut self, a_match: Match) {
         let team_name_1 = a_match.team_1;
         let team_name_2 = a_match.team_2;
 
-        let team_1 = self.teams.get(&team_name_1);
-        let mut team_1 = match team_1 {
-            Some(team) => {
-                team
-            },
-            _ => &Team::new(team_name_1),
-        };
-        let team_2 = self.teams.get(&team_name_2);
-        let mut team_2 = match team_2 {
-            Some(team) => {
-                team
-            },
-            _ => &Team::new(team_name_2),
-        };
-
+        let team_1 = self.teams.entry(team_name_1).or_insert_with(Team::new);
+        team_1.matchs_played += 1;
         match a_match.score {
             Score::Win => {
-                team_1.matchs_played += 1;
                 team_1.matchs_won += 1;
-                team_2.matchs_played += 1;
-                team_2.matchs_lost += 1;
-            },
+            }
             Score::Draw => {
-                team_1.matchs_played += 1;
                 team_1.matchs_drawn += 1;
-                team_2.matchs_played += 1;
-                team_2.matchs_drawn += 1;
-            },
+            }
             Score::Loss => {
-                team_1.matchs_played += 1;
                 team_1.matchs_lost += 1;
-                team_2.matchs_played += 1;
-                team_2.matchs_won += 1;
-            },
+            }
         }
 
-        tournament.teams.insert(team_name_1.clone(), team_1.clone()).unwrap();
-        tournament.teams.insert(team_name_2.clone(), team_2.clone()).unwrap();
+        let team_2 = self.teams.entry(team_name_2).or_insert_with(Team::new);
+        team_2.matchs_played += 1;
+        match a_match.score {
+            Score::Win => {
+                team_2.matchs_lost += 1;
+            }
+            Score::Draw => {
+                team_2.matchs_drawn += 1;
+            }
+            Score::Loss => {
+                team_2.matchs_won += 1;
+            }
+        }
+    }
 
-        tournament
+    fn display_team(&self, team_name: String) -> String {
+        let team = self.teams.get(&team_name).unwrap();
+        format!(
+            "{: <30} |{: >3} |{: >3} |{: >3} |{: >3} |{: >3}",
+            team_name,
+            team.matchs_played,
+            team.matchs_won,
+            team.matchs_drawn,
+            team.matchs_lost,
+            team.matchs_won * 3 + team.matchs_drawn
+        )
+    }
+
+    fn display_header() -> String {
+        format!(
+            "{: <30} |{: >3} |{: >3} |{: >3} |{: >3} |{: >3}",
+            "Team", "MP", "W", "D", "L", "P"
+        )
+    }
+
+    fn display(&self) -> String {
+        let mut table = Tournament::display_header();
+
+        // TODO: Order teams by points (desc) then alphabetically.
+        let table_teams: String = self
+            .teams
+            .iter()
+            .map(|(name, _)| {
+                let mut line = String::from("\n");
+                line += &self.display_team(name.clone());
+                line
+            })
+            .collect();
+
+        table.push_str(&table_teams);
+        table
+    }
+}
+
+impl std::fmt::Display for Tournament {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.display())
     }
 }
 
 pub fn tally(match_results: &str) -> String {
-    let mut table = String::from("Team                           | MP |  W |  D |  L |  P");
-    let matches: Vec<Match> = match_results
+    let mut tournament = Tournament::new();
+    match_results
         .lines()
-        .map(|line| Match::from_input(line))
-        .collect();
-    
+        .for_each(|line| tournament.update_team(Match::from_input(line)));
 
-    table
+    format!("{}", tournament)
 }
