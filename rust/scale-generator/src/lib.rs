@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 // You should change this.
 //
 // Depending on your implementation, there are a variety of potential errors
@@ -24,26 +26,72 @@ enum Interval {
     Augmented,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 enum Alteration {
     None,
     Sharp,
     Flat,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash)]
+enum Root {
+    A,
+    B,
+    D,
+    E,
+    F,
+    G,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash)]
 struct Note {
+    base: Root,
     alteration: Alteration,
 }
 
 #[derive(Debug)]
-pub struct Scale<'a> {
-    Tonic: &'a str,
+pub struct Scale {
+    Tonic: Note,
     Intervals: Vec<Interval>,
 }
 
-impl<'a> Scale<'a> {
-    pub fn new(tonic: &str, intervals: &str) -> Result<Scale<'a>, Error> {
+/* TODO: Pas bon à reprendre
+ 0: [A, Bb]
+ 1: [B, A#]
+ 2: [B#, Cb]
+ 3: [C]
+ 4: [C#, Db]
+ 5: [D]
+ 6: [D#, Eb]
+ 7: [E]
+ 8: [F, E#]
+ 9: [F#, Gb]
+10: [G]
+11: [G#, Ab]
+*/
+
+impl Scale {
+    fn base_interval() -> HashMap<(Note, Note), Interval> {
+        let mut notes = HashMap::new();
+
+        notes.insert(
+            (
+                Note {
+                    base: Root::A,
+                    alteration: Alteration::None,
+                },
+                Note {
+                    base: Root::B,
+                    alteration: Alteration::None,
+                },
+            ),
+            Interval::Major,
+        );
+
+        notes
+    }
+
+    pub fn new(tonic: &str, intervals: &str) -> Result<Scale, Error> {
         unimplemented!(
             "Construct a new scale with tonic {} and intervals {}",
             tonic,
@@ -51,7 +99,7 @@ impl<'a> Scale<'a> {
         )
     }
 
-    pub fn chromatic(tonic: &str) -> Result<Scale<'a>, Error> {
+    pub fn chromatic(tonic: &str) -> Result<Scale, Error> {
         unimplemented!("Construct a new chromatic scale with tonic {}", tonic)
     }
 
