@@ -55,10 +55,10 @@ pub struct Scale {
     Intervals: Vec<Interval>,
 }
 
-/* TODO: Pas bon à reprendre
- 0: [A, Bb]
- 1: [B, A#]
- 2: [B#, Cb]
+/* TODO: Put in a const
+ 0: [A]
+ 1: [A#, Bb]
+ 2: [B, Cb]
  3: [C]
  4: [C#, Db]
  5: [D]
@@ -71,26 +71,6 @@ pub struct Scale {
 */
 
 impl Scale {
-    fn base_interval() -> HashMap<(Note, Note), Interval> {
-        let mut notes = HashMap::new();
-
-        notes.insert(
-            (
-                Note {
-                    base: Root::A,
-                    alteration: Alteration::None,
-                },
-                Note {
-                    base: Root::B,
-                    alteration: Alteration::None,
-                },
-            ),
-            Interval::Major,
-        );
-
-        notes
-    }
-
     pub fn new(tonic: &str, intervals: &str) -> Result<Scale, Error> {
         unimplemented!(
             "Construct a new scale with tonic {} and intervals {}",
