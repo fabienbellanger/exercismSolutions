@@ -8,17 +8,29 @@ pub enum LogLevel {
     Info,
     Warning,
     Error,
+    #[cfg(feature = "add-a-variant")]
+    Debug,
 }
 /// primary function for emitting logs
 pub fn log(level: LogLevel, message: &str) -> String {
-    unimplemented!()
+    match level {
+        LogLevel::Info => format!("[INFO]: {}", message),
+        LogLevel::Warning => format!("[WARNING]: {}", message),
+        LogLevel::Error => format!("[ERROR]: {}", message),
+        #[cfg(feature = "add-a-variant")]
+        LogLevel::Debug => format!("[DEBUG]: {}", message),
+    }
 }
 pub fn info(message: &str) -> String {
-    unimplemented!()
+    log(LogLevel::Info, message)
 }
 pub fn warn(message: &str) -> String {
-    unimplemented!()
+    log(LogLevel::Warning, message)
 }
 pub fn error(message: &str) -> String {
-    unimplemented!()
+    log(LogLevel::Error, message)
+}
+#[cfg(feature = "add-a-variant")]
+pub fn debug(message: &str) -> String {
+    log(LogLevel::Debug, message)
 }
