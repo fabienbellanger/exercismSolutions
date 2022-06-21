@@ -19,40 +19,38 @@ pub enum Allergen {
     Cats = 1 << 7,         // 128 = 2^7
 }
 
+const ALLERGENS: &[Allergen; 8] = &[
+    Allergen::Eggs,
+    Allergen::Peanuts,
+    Allergen::Shellfish,
+    Allergen::Strawberries,
+    Allergen::Tomatoes,
+    Allergen::Chocolate,
+    Allergen::Pollen,
+    Allergen::Cats,
+];
+
 impl Allergies {
     pub fn new(score: u32) -> Self {
-        // Max = 255 => All allergens
-        let score = score % 256;
+        let n = ALLERGENS.len();
+        let mut score = score % 256; // Max = 255 => All allergens
+        let mut list = Vec::with_capacity(n);
 
-        let mut list = Vec::with_capacity(8);
-        let mut remaining = score;
-
-        for i in 0..8 {
-            if remaining == 0 {
+        for i in 0..n {
+            if score == 0 {
                 break;
             }
 
-            let value = 1u32 << (8 - i - 1);
+            let j: usize = n - i - 1;
+            let value = 1u32 << (n - i - 1);
 
-            if value > remaining {
+            if value > score {
                 continue;
             }
 
-            let allergen = match i {
-                0 => Allergen::Cats,
-                1 => Allergen::Pollen,
-                2 => Allergen::Chocolate,
-                3 => Allergen::Tomatoes,
-                4 => Allergen::Strawberries,
-                5 => Allergen::Shellfish,
-                6 => Allergen::Peanuts,
-                7 => Allergen::Eggs,
-                _ => panic!("invalid number"),
-            };
+            list.push((&ALLERGENS[j]).clone());
 
-            list.push(allergen.clone());
-
-            remaining -= value;
+            score -= value;
         }
 
         Self { list }
