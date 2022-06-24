@@ -44,9 +44,16 @@ enum Root {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
+enum Mode {
+    Major, // Uppercase
+    Minor, // Lowercase
+}
+
+#[derive(Debug, PartialEq, Eq, Hash)]
 struct Note {
     base: Root,
-    alteration: Alteration,
+    Mode: Mode,
+    Alteration: Alteration,
 }
 
 #[derive(Debug)]
@@ -54,6 +61,12 @@ pub struct Scale {
     Tonic: Note,
     Intervals: Vec<Interval>,
 }
+
+/* TODO: Put in HashMap 48 entries
+    "A" => Note{Root: A, Mode: Major, Alteration: None},
+    "ab" => Note{Root: A, Mode: Minor, Alteration: Flat},
+    ...
+ */
 
 /* TODO: Put in a const
  0: [A]
