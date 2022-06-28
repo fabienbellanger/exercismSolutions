@@ -9,7 +9,7 @@ pub fn collatz(n: u64) -> Option<u64> {
         if n % 2 == 0 {
             n /= 2;
         } else {
-            n = 3 * n + 1
+            n = n.checked_mul(3)?.checked_add(1)?;
         }
 
         i += 1;
