@@ -2,51 +2,38 @@ use std::collections::HashSet;
 
 pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'a str> {
     let mut result: HashSet<&'a str> = HashSet::new();
-    let word_set: Vec<char> = order(word);
+    let word_set = ordered_list(word);
+    let word_length = word.len();
+    let word_to_uppercase = to_uppercase(word);
 
     for item in possible_anagrams {
-        let item_set = order(item);
-        if item_set == word_set && to_uppercase(word) != to_uppercase(*item) {
-            result.insert(item);
+        if item.len() == word_length {
+            let item_set = ordered_list(item);
+            if item_set == word_set && word_to_uppercase != to_uppercase(*item) {
+                result.insert(item);
+            }
         }
     }
 
     result
 }
 
-fn to_uppercase(word: &str) -> String {
-    word.chars()
-        .map(|c| match c {
-            'α' => 'Α',
-            'β' => 'Β',
-            'γ' => 'Γ',
-            _ => {
-                if c.is_ascii_lowercase() {
-                    c.to_ascii_uppercase()
-                } else {
-                    c
-                }
-            }
-        })
-        .collect()
+fn word_iterator(word: &'_ str) -> impl Iterator<Item = String> + '_ {
+    word.chars().map(|c| {
+        if c.is_lowercase() {
+            c.to_uppercase().to_string()
+        } else {
+            c.to_string()
+        }
+    })
 }
 
-fn order(word: &str) -> Vec<char> {
-    let mut ordered_word: Vec<char> = word
-        .chars()
-        .map(|c| match c {
-            'α' => 'Α',
-            'β' => 'Β',
-            'γ' => 'Γ',
-            _ => {
-                if c.is_ascii_lowercase() {
-                    c.to_ascii_uppercase()
-                } else {
-                    c
-                }
-            }
-        })
-        .collect();
+fn to_uppercase(word: &str) -> String {
+    word_iterator(word).collect()
+}
+
+fn ordered_list(word: &str) -> Vec<String> {
+    let mut ordered_word: Vec<String> = word_iterator(word).collect();
 
     ordered_word.sort_unstable();
     ordered_word
