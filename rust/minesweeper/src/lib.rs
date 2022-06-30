@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 const DIRECTIONS: &[(isize, isize)] = &[
     (-1, -1),
     (0, -1),
@@ -12,53 +10,29 @@ const DIRECTIONS: &[(isize, isize)] = &[
 ];
 
 pub fn annotate(minefield: &[&str]) -> Vec<String> {
-    let mines = get_mines(minefield);
+    let height = minefield.len() as isize;
 
-    let mut grid = vec![];
-    for (y, line) in minefield.iter().enumerate() {
-        let mut new_line = String::new();
-
-        for (x, c) in line.chars().enumerate() {
-            if !mines.contains(&(x, y)) {
-                let mut n = 0;
-                for dir in DIRECTIONS {
-                    let new_x = (x as isize + dir.0) as usize;
-                    let new_y = (y as isize + dir.1) as usize;
-
-                    if mines.contains(&(new_x, new_y)) {
-                        n += 1;
+    (0..height)
+        .map(|y| {
+            let width = minefield[y as usize].len() as isize;
+            (0..width)
+                .map(|x| {
+                    if minefield[y as usize].as_bytes()[x as usize] == b'*' {
+                        '*'
+                    } else {
+                        let count = DIRECTIONS
+                            .iter()
+                            .map(|(x_d, y_d)| (x + x_d, y + y_d))
+                            .filter(|(x, y)| (0 <= *x && *x < width) && (0 <= *y && *y < height))
+                            .filter(|(x, y)| minefield[*y as usize].as_bytes()[*x as usize] == b'*')
+                            .count();
+                        match count {
+                            0 => ' ',
+                            _ => (count as u8 + b'0') as char,
+                        }
                     }
-                }
-
-                if n == 0 {
-                    new_line.push(' ');
-                } else {
-                    let s = n.to_string();
-                    new_line.push_str(s.as_str());
-                }
-            } else {
-                new_line.push(c);
-            }
-        }
-
-        grid.push(new_line);
-    }
-
-    grid
-}
-
-fn get_mines(minefield: &[&str]) -> HashSet<(usize, usize)> {
-    minefield
-        .iter()
-        .enumerate()
-        .flat_map(|(y, lines)| {
-            lines
-                .as_bytes()
-                .iter()
-                .enumerate()
-                .filter(|(_x, b)| **b == 42) // => *
-                .map(|(x, _b)| (x, y))
-                .collect::<HashSet<(usize, usize)>>()
+                })
+                .collect::<String>()
         })
-        .collect::<HashSet<(usize, usize)>>()
+        .collect::<Vec<String>>()
 }
