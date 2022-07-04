@@ -44,5 +44,30 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
         return Err(Error::InvalidOutputBase);
     }
 
-    Ok(vec![])
+    for n in number.iter() {
+        if *n >= from_base {
+            return Err(Error::InvalidDigit(*n));
+        }
+    }
+
+    let value: u32 = number
+        .iter()
+        .rev()
+        .enumerate()
+        .map(|(i, n)| n * from_base.pow(i as u32))
+        .sum();
+
+    let mut remaining = value;
+    let mut result = vec![];
+
+    while remaining >= to_base {
+        let r = remaining % to_base;
+        result.push(r);
+
+        remaining /= to_base;
+    }
+    result.push(remaining);
+    result.reverse();
+
+    Ok(result)
 }
