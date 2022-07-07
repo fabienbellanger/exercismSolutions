@@ -45,20 +45,23 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
 
     for i in min..=max {
         for j in i..=max {
+            if j % i != 0 {
+                continue;
+            }
             let product = i * j;
             if visited.contains(&product) {
                 continue;
             }
             visited.insert(product);
 
-            if let Some(p) = Palindrome::new(product) {
-                if p.into_inner() > max_palindrome.into_inner() {
-                    max_palindrome = p;
-                }
-                if p.into_inner() < min_palindrome.into_inner() {
-                    min_palindrome = p;
-                }
-            }
+            // if let Some(p) = Palindrome::new(product) {
+            //     if p.into_inner() > max_palindrome.into_inner() {
+            //         max_palindrome = p;
+            //     }
+            //     if p.into_inner() < min_palindrome.into_inner() {
+            //         min_palindrome = p;
+            //     }
+            // }
         }
     }
     if min_palindrome.into_inner() == u64::MAX || max_palindrome.into_inner() == u64::MIN {
