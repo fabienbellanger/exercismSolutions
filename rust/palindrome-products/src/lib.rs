@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 /// `Palindrome` is a newtype which only exists when the contained value is a palindrome number in base ten.
 ///
 /// A struct with a single field which is used to constrain behavior like this is called a "newtype", and its use is
@@ -33,8 +35,34 @@ impl Palindrome {
 }
 
 pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
-    unimplemented!(
-        "returns the minimum and maximum number of palindromes of the products of two factors in the range {} to {}",
-        min, max
-    );
+    if min > max {
+        return None;
+    }
+
+    let mut min_palindrome = Palindrome(u64::MAX);
+    let mut max_palindrome = Palindrome(u64::MIN);
+    let mut visited = HashSet::new();
+
+    for i in min..=max {
+        for j in i..=max {
+            let product = i * j;
+            if visited.contains(&product) {
+                continue;
+            }
+            visited.insert(product);
+
+            if let Some(p) = Palindrome::new(product) {
+                if p.into_inner() > max_palindrome.into_inner() {
+                    max_palindrome = p;
+                }
+                if p.into_inner() < min_palindrome.into_inner() {
+                    min_palindrome = p;
+                }
+            }
+        }
+    }
+    if min_palindrome.into_inner() == u64::MAX || max_palindrome.into_inner() == u64::MIN {
+        return None;
+    }
+    Some((min_palindrome, max_palindrome))
 }
