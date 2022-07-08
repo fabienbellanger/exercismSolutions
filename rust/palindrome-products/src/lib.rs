@@ -41,18 +41,16 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
 
     let mut min_palindrome = Palindrome(u64::MAX);
     let mut max_palindrome = Palindrome(u64::MIN);
-    //let mut visited = HashSet::new();
+    let mut visited = HashSet::new();
 
     for i in min..=max {
-        let mut j = i;
-        while j <= max {
-            //dbg!(i, j, max);
+        for j in i..=max {
             let product = i * j;
 
-            // if visited.contains(&product) {
-            //     continue;
-            // }
-            // visited.insert(product);
+            if visited.contains(&product) {
+                continue;
+            }
+            visited.insert(product);
 
             if let Some(p) = Palindrome::new(product) {
                 if p.into_inner() > max_palindrome.into_inner() {
@@ -62,10 +60,7 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
                     min_palindrome = p;
                 }
             }
-
-            j += i;
         }
-        dbg!(j);
     }
     if min_palindrome.into_inner() == u64::MAX || max_palindrome.into_inner() == u64::MIN {
         return None;
