@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 /// `Palindrome` is a newtype which only exists when the contained value is a palindrome number in base ten.
 ///
 /// A struct with a single field which is used to constrain behavior like this is called a "newtype", and its use is
@@ -10,22 +8,19 @@ pub struct Palindrome(u64);
 impl Palindrome {
     /// Create a `Palindrome` only if `value` is in fact a palindrome when represented in base ten. Otherwise, `None`.
     pub fn new(value: u64) -> Option<Palindrome> {
-        let mut to_bytes: Vec<u32> = vec![];
-        
-        for d in value.to_string().chars() {
-            match d.to_digit(10) {
-                Some(d) => to_bytes.push(d),
-                None => return None,
-            }
+        let mut remain_left = value;
+        let mut right = 0;
+
+        while remain_left > 0 {
+            right *= 10;
+            right += remain_left % 10;
+            remain_left /= 10;
         }
 
-        let mut to_bytes_reversed = to_bytes.clone();
-        to_bytes_reversed.reverse();
-        
-        if to_bytes == to_bytes_reversed {
-            return Some(Self(value));
+        match right == value {
+            true => Some(Self(value)),
+            _ => None,
         }
-        None
     }
 
     /// Get the value of this palindrome.
@@ -41,16 +36,13 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
 
     let mut min_palindrome = Palindrome(u64::MAX);
     let mut max_palindrome = Palindrome(u64::MIN);
-    let mut visited = HashSet::new();
 
     for i in min..=max {
+        if i % 10 == 0 {
+            continue;
+        }
         for j in i..=max {
             let product = i * j;
-
-            if visited.contains(&product) {
-                continue;
-            }
-            visited.insert(product);
 
             if let Some(p) = Palindrome::new(product) {
                 if p.into_inner() > max_palindrome.into_inner() {
