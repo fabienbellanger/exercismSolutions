@@ -28,17 +28,17 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
     let mut added: HashSet<Point> = HashSet::new();
     let mut current: Option<Point> = None;
     let mut direction = Direction::Right;
-    let mut new_x = 0;
-    let mut new_y = 0;
+    let mut _new_x = 0;
+    let mut _new_y = 0;
 
     for y in 0..size {
         for x in 0..size {
-            (direction, new_x, new_y) = get_direction(&current, &direction, &added, size);
+            (direction, _new_x, _new_y) = get_direction(&current, &direction, &added, size);
 
-            spiral[new_y as usize][new_x as usize] = size * y + x + 1;
+            spiral[_new_y as usize][_new_x as usize] = size * y + x + 1;
 
-            current = Some(Point::new(new_x, new_y));
-            added.insert(Point::new(new_x, new_y));
+            current = Some(Point::new(_new_x, _new_y));
+            added.insert(Point::new(_new_x, _new_y));
         }
     }
 
