@@ -1,38 +1,45 @@
 pub fn encrypt(input: &str) -> String {
+    if input.is_empty() {
+        return input.to_string();
+    }
+
     let input = normalize(input);
-    let (rows, cols) = calculate_rows_cols(input.len());
+    let width = calculate_width(input.len());
 
-
-    let square = input.chars()
+    let square = input
+        .chars()
         .collect::<Vec<_>>()
-        .chunks(cols)
-        .map(|chunk| format!("{line: <cols$}", line = chunk.iter().collect::<String>(), cols = cols))
+        .chunks(width)
+        .map(|chunk| {
+            format!(
+                "{line: <width$}",
+                line = chunk.iter().collect::<String>(),
+                width = width
+            )
+        })
         .collect::<Vec<String>>();
-    dbg!(square);
 
-    unimplemented!("Encrypt {:?} using a square code", input)
+    let mut transposed_square = vec!["".to_owned(); width];
+    for row in square.iter() {
+        for (c, col) in row.chars().enumerate() {
+            transposed_square[c].push(col);
+        }
+    }
+
+    transposed_square.join(" ")
 }
 
 fn normalize(input: &str) -> String {
-    input.chars()
+    input
+        .chars()
         .filter(|c| c.is_ascii_alphanumeric())
         .map(|c| match c.is_ascii_uppercase() {
             true => c.to_ascii_lowercase(),
-            false => c
+            false => c,
         })
         .collect()
 }
 
-fn calculate_rows_cols(length: usize) -> (usize, usize) {
-    if length == 0 {
-        return (0, 0);
-    }
-
-    let rows = (length as f64).sqrt() as usize;
-    let cols = length / rows;
-
-    (rows, match length % rows == 0 {
-        true => cols,
-        false => cols + 1,
-    })
+fn calculate_width(length: usize) -> usize {
+    (length as f64).sqrt().ceil() as usize
 }
