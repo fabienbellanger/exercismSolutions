@@ -1,30 +1,11 @@
 use rand::prelude::*;
 
-// TODO: Add a function simplify encode and decode functions
-// fn transform(key: &str, s: &str, transform_char: fn(char, char) -> char) -> Option<String>
-
 pub fn encode(key: &str, s: &str) -> Option<String> {
-    match is_key_valid(key) {
-        false => None,
-        true => Some(
-            s.chars()
-                .zip(key.chars().cycle())
-                .map(|(c, k)| encode_char(c, k))
-                .collect::<String>(),
-        ),
-    }
+    transform(key, s, encode_char)
 }
 
 pub fn decode(key: &str, s: &str) -> Option<String> {
-    match is_key_valid(key) {
-        false => None,
-        true => Some(
-            s.chars()
-                .zip(key.chars().cycle())
-                .map(|(c, k)| decode_char(c, k))
-                .collect::<String>(),
-        ),
-    }
+    transform(key, s, decode_char)
 }
 
 pub fn encode_random(s: &str) -> (String, String) {
@@ -42,6 +23,18 @@ fn is_key_valid(key: &str) -> bool {
         && key
             .chars()
             .all(|c| c.is_ascii_lowercase() && c.is_ascii_alphabetic())
+}
+
+fn transform(key: &str, s: &str, tranform: fn(char, char) -> char) -> Option<String> {
+    match is_key_valid(key) {
+        false => None,
+        true => Some(
+            s.chars()
+                .zip(key.chars().cycle())
+                .map(|(c, k)| tranform(c, k))
+                .collect::<String>(),
+        ),
+    }
 }
 
 fn encode_char(c: char, k: char) -> char {
