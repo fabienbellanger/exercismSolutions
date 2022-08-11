@@ -51,7 +51,6 @@ fn test_d() {
 }
 
 #[test]
-#[ignore]
 fn test_e() {
     assert_eq!(
         get_diamond('Z'),

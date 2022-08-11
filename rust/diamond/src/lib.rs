@@ -13,20 +13,16 @@ pub fn get_diamond(c: char) -> Vec<String> {
     // ------------------
     //   | 0 1 2 3 4 5 6
 
-    let grid: Vec<String> = (0..=end)
+    let mut grid: Vec<String> = (0..=end)
         .map(|i| {
             (0..=end * 2)
-                .map(|n| {
-                    if n == end - i || n == end + i {
-                        char::from(START + i)
-                    } else {
-                        ' '
-                    }
+                .map(|n| match n == end - i || n == end + i {
+                    true => char::from(START + i),
+                    false => ' ',
                 })
                 .collect::<String>()
         })
         .collect();
-    dbg!(&grid);
 
     // Second part
     // -----------
@@ -40,10 +36,9 @@ pub fn get_diamond(c: char) -> Vec<String> {
     // 6 |       A
     // ------------------
     //   | 0 1 2 3 4 5 6
-    let mut _grid_2 = grid.clone();
+    for i in 0..end {
+        grid.push(grid[(end - 1 - i) as usize].clone());
+    }
 
-    unimplemented!(
-        "Return the vector of strings which represent the diamond with particular char {}",
-        c
-    );
+    grid
 }
