@@ -1,102 +1,66 @@
-use std::collections::HashMap;
+const SHARPS: &[&str] = &[
+    "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#",
+];
+const FLATS: &[&str] = &[
+    "A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab",
+];
 
-// You should change this.
-//
-// Depending on your implementation, there are a variety of potential errors
-// which might occur. They aren't checked by the test suite in order to
-// allow the greatest freedom of implementation, but real libraries should
-// provide useful, descriptive errors so that downstream code can react
-// appropriately.
-//
-// One common idiom is to define an Error enum which wraps all potential
-// errors. Another common idiom is to use a helper type such as failure::Error
-// which does more or less the same thing but automatically.
-#[derive(Debug)]
-pub struct Error;
+const USE_SHARPS: &[&str] = &[
+    "C", "a", "G", "D", "A", "E", "B", "F#", "e", "b", "f#", "c#", "g#", "d#",
+];
+const USE_FLATS: &[&str] = &[
+    "C", "a", "F", "Bb", "Eb", "Ab", "Db", "Gb", "d", "g", "c", "f", "bb", "eb",
+];
 
 #[derive(Debug)]
-enum Interval {
-    // Minor: 1/2 step
-    Minor,
-
-    // Major: 1 step
-    Major,
-
-    // Augmented: 1 1/2 step
-    Augmented,
-}
-
-#[derive(Debug, PartialEq, Eq, Hash)]
-enum Alteration {
-    None,
-    Sharp,
-    Flat,
-}
-
-#[derive(Debug, PartialEq, Eq, Hash)]
-enum Root {
-    A,
-    B,
-    D,
-    E,
-    F,
-    G,
-}
-
-#[derive(Debug, PartialEq, Eq, Hash)]
-enum Mode {
-    Major, // Uppercase
-    Minor, // Lowercase
-}
-
-#[derive(Debug, PartialEq, Eq, Hash)]
-struct Note {
-    base: Root,
-    Mode: Mode,
-    Alteration: Alteration,
+pub enum Error<'a> {
+    InvalidTonic(&'a str),
+    InvalidScale(char),
 }
 
 #[derive(Debug)]
 pub struct Scale {
-    Tonic: Note,
-    Intervals: Vec<Interval>,
+    notes: Vec<String>,
 }
 
-/* TODO: Put in HashMap 48 entries
-    "A" => Note{Root: A, Mode: Major, Alteration: None},
-    "ab" => Note{Root: A, Mode: Minor, Alteration: Flat},
-    ...
- */
-
-/* TODO: Put in a const
- 0: [A]
- 1: [A#, Bb]
- 2: [B, Cb]
- 3: [C]
- 4: [C#, Db]
- 5: [D]
- 6: [D#, Eb]
- 7: [E]
- 8: [F, E#]
- 9: [F#, Gb]
-10: [G]
-11: [G#, Ab]
-*/
-
 impl Scale {
-    pub fn new(tonic: &str, intervals: &str) -> Result<Scale, Error> {
-        unimplemented!(
-            "Construct a new scale with tonic {} and intervals {}",
-            tonic,
-            intervals
-        )
+    pub fn new<'a>(tonic: &'a str, intervals: &str) -> Result<Scale, Error<'a>> {
+        let chromotic_scale = if USE_SHARPS.contains(&tonic) {
+            SHARPS
+        } else if USE_FLATS.contains(&tonic) {
+            FLATS
+        } else {
+            return Err(Error::InvalidTonic(tonic));
+        };
+
+        let mut position_in_scale = chromotic_scale
+            .iter()
+            .position(|&note| note.to_uppercase() == tonic.to_uppercase())
+            .ok_or(Error::InvalidTonic(tonic))?;
+
+        let mut notes = vec![chromotic_scale[position_in_scale].to_string()];
+        let scale_length = chromotic_scale.len();
+
+        for interval in intervals.chars() {
+            let step = match interval {
+                'm' => 1,
+                'M' => 2,
+                'A' => 3,
+                _ => return Err(Error::InvalidScale(interval)),
+            };
+            position_in_scale = (position_in_scale + step) % scale_length;
+
+            notes.push(chromotic_scale[position_in_scale].to_string());
+        }
+
+        Ok(Self { notes })
     }
 
     pub fn chromatic(tonic: &str) -> Result<Scale, Error> {
-        unimplemented!("Construct a new chromatic scale with tonic {}", tonic)
+        Self::new(tonic, "mmmmmmmmmmmm")
     }
 
     pub fn enumerate(&self) -> Vec<String> {
-        unimplemented!()
+        self.notes.clone()
     }
 }
