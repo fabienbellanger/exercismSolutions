@@ -10,7 +10,7 @@ where
     T: Hash + PartialEq + Eq + Clone + Debug,
 {
     pub fn new(input: &[T]) -> Self {
-        let values = input.into_iter().cloned().collect();
+        let values = input.iter().cloned().collect();
         Self { values }
     }
 
@@ -37,17 +37,38 @@ where
     }
 
     #[must_use]
-    pub fn intersection(&self, _other: &Self) -> Self {
-        unimplemented!();
+    pub fn intersection(&self, other: &Self) -> Self {
+        Self {
+            values: self
+                .values
+                .iter()
+                .filter(|v| other.values.contains(v))
+                .cloned()
+                .collect(),
+        }
     }
 
     #[must_use]
-    pub fn difference(&self, _other: &Self) -> Self {
-        unimplemented!();
+    pub fn difference(&self, other: &Self) -> Self {
+        Self {
+            values: self
+                .values
+                .iter()
+                .filter(|v| !other.values.contains(v))
+                .cloned()
+                .collect(),
+        }
     }
 
     #[must_use]
-    pub fn union(&self, _other: &Self) -> Self {
-        unimplemented!();
+    pub fn union(&self, other: &Self) -> Self {
+        Self {
+            values: self
+                .values
+                .iter()
+                .chain(other.values.iter())
+                .cloned()
+                .collect(),
+        }
     }
 }
