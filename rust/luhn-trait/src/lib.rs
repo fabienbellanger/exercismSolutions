@@ -1,10 +1,10 @@
-pub struct Luhn {
-    code: String,
+pub trait Luhn {
+    fn valid_luhn(&self) -> bool;
 }
 
-impl Luhn {
-    pub fn is_valid(&self) -> bool {
-        let code = self.code.replace(' ', "");
+impl<T: ToString> Luhn for T {
+    fn valid_luhn(&self) -> bool {
+        let code = self.to_string().replace(' ', "");
 
         if code.len() <= 1 || code.chars().any(|c| !c.is_ascii_digit()) {
             return false;
@@ -30,11 +30,5 @@ impl Luhn {
             .sum();
 
         sum % 10 == 0
-    }
-}
-
-impl<T: ToString> From<T> for Luhn {
-    fn from(input: T) -> Self {
-        Self { code: input.to_string() }
     }
 }
