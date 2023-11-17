@@ -2,9 +2,8 @@ const std = @import("std");
 const ascii = std.ascii;
 
 pub fn isPangram(str: []const u8) bool {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-    const allocator = arena.allocator();
+    var general_purpose_allocator = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = general_purpose_allocator.allocator();
 
     var set = std.AutoHashMap(u8, void).init(allocator);
     defer set.deinit();
