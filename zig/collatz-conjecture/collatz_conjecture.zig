@@ -2,7 +2,7 @@ pub const ComputationError = error{
     IllegalArgument,
 };
 
-pub fn steps(number: usize) anyerror!usize {
+pub fn steps(number: usize) ComputationError!usize {
     if (number == 0) {
         return ComputationError.IllegalArgument;
     }
