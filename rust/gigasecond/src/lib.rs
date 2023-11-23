@@ -1,8 +1,4 @@
-use std::ops::Add;
-
-use chrono::{DateTime, Duration, Utc};
-
-// Returns a Utc DateTime one billion seconds after start.
-pub fn after(start: DateTime<Utc>) -> DateTime<Utc> {
-    start.add(Duration::seconds(1_000_000_000))
+use time::{Duration, PrimitiveDateTime as DateTime};
+pub fn after(start_date: DateTime) -> DateTime {
+    start_date + Duration::seconds(1_000_000_000)
 }
