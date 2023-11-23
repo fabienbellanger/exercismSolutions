@@ -4,7 +4,8 @@ use std::collections::HashMap;
 pub fn word_count(words: &str) -> HashMap<String, u32> {
     let mut counter = HashMap::new();
 
-    words.split(|c: char| !c.is_alphanumeric() && c != '\'')
+    words
+        .split(|c: char| !c.is_alphanumeric() && c != '\'')
         .filter(|s| !s.is_empty())
         .map(|s| {
             let mut new_s = s.to_ascii_lowercase();
@@ -17,7 +18,9 @@ pub fn word_count(words: &str) -> HashMap<String, u32> {
             new_s
         })
         .for_each(|part| {
-            counter.entry(part).and_modify(|c| *c += 1).or_insert(1);
+            if !part.is_empty() {
+                counter.entry(part).and_modify(|c| *c += 1).or_insert(1);
+            }
         });
 
     counter
