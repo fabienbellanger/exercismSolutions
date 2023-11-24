@@ -29,6 +29,12 @@ pub struct Fizzy<T: fmt::Display + Clone> {
     matchers: Vec<Matcher<T>>,
 }
 
+impl<T: fmt::Display + Clone> Default for Fizzy<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: fmt::Display + Clone> Fizzy<T> {
     pub fn new() -> Self {
         Self { matchers: vec![] }
