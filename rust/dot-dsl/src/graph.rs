@@ -1,4 +1,4 @@
-use crate::{edge::Edge, node::Node, Attrs};
+use crate::{edge::Edge, node::Node};
 use std::collections::HashMap;
 
 pub mod graph_items {
@@ -15,6 +15,12 @@ pub struct Graph {
     pub nodes: Vec<Node>,
     pub edges: Vec<Edge>,
     pub attrs: HashMap<String, String>,
+}
+
+impl Default for Graph {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Graph {
@@ -36,13 +42,11 @@ impl Graph {
         self
     }
 
-    pub fn get_node(&self, name: &str) -> Option<&Node> {
+    pub fn node(&self, name: &str) -> Option<&Node> {
         self.nodes.iter().find(|node| node.name == name)
     }
-}
 
-impl Attrs for Graph {
-    fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
+    pub fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
         self.attrs = attributes
             .iter()
             .map(|(a, b)| (a.to_string(), b.to_string()))
@@ -50,7 +54,7 @@ impl Attrs for Graph {
         self
     }
 
-    fn get_attr(&self, key: &str) -> Option<&str> {
+    pub fn get_attr(&self, key: &str) -> Option<&str> {
         self.attrs.get(key).map(|s| s.as_str())
     }
 }

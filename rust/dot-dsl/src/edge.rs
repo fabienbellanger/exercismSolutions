@@ -1,4 +1,3 @@
-use crate::Attrs;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -16,10 +15,12 @@ impl Edge {
             attrs: HashMap::new(),
         }
     }
-}
 
-impl Attrs for Edge {
-    fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
+    pub fn attr(&self, attribute: &str) -> Option<&str> {
+        self.attrs.get(attribute).map(|a| a.as_str())
+    }
+
+    pub fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
         self.attrs = attributes
             .iter()
             .map(|(a, b)| (a.to_string(), b.to_string()))
@@ -27,7 +28,7 @@ impl Attrs for Edge {
         self
     }
 
-    fn get_attr(&self, key: &str) -> Option<&str> {
+    pub fn get_attr(&self, key: &str) -> Option<&str> {
         self.attrs.get(key).map(|s| s.as_str())
     }
 }

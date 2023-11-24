@@ -1,4 +1,3 @@
-use crate::Attrs;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -15,13 +14,11 @@ impl Node {
         }
     }
 
-    pub fn get_attr(&self, key: &str) -> Option<&str> {
+    pub fn attr(&self, key: &str) -> Option<&str> {
         self.attrs.get(key).map(|s| s.as_str())
     }
-}
 
-impl Attrs for Node {
-    fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
+    pub fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
         self.attrs = attributes
             .iter()
             .map(|(a, b)| (a.to_string(), b.to_string()))
@@ -29,7 +26,7 @@ impl Attrs for Node {
         self
     }
 
-    fn get_attr(&self, key: &str) -> Option<&str> {
+    pub fn get_attr(&self, key: &str) -> Option<&str> {
         self.attrs.get(key).map(|s| s.as_str())
     }
 }
