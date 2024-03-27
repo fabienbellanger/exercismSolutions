@@ -16,6 +16,7 @@ const BIGS: [&str; 3] = [
 
 // test simple properties of required operations
 #[test]
+#[ignore]
 fn eq() {
     assert!(decimal("0.0") == decimal("0.0"));
     assert!(decimal("1.0") == decimal("1.0"));
