@@ -13,10 +13,9 @@ const BIGS: [&str; 3] = [
     "100000000000000000000000000000000000000000000.00000000000000000000000000000000000000002",
     "200000000000000000000000000000000000000000000.00000000000000000000000000000000000000003",
 ];
-/*
+
 // test simple properties of required operations
 #[test]
-#[ignore]
 fn eq() {
     assert!(decimal("0.0") == decimal("0.0"));
     assert!(decimal("1.0") == decimal("1.0"));
@@ -26,14 +25,12 @@ fn eq() {
 }
 
 #[test]
-#[ignore]
 fn ne() {
     assert!(decimal("0.0") != decimal("1.0"));
     assert!(decimal(BIGS[0]) != decimal(BIGS[1]));
 }
 
 #[test]
-#[ignore]
 fn gt() {
     for slice_2 in BIGS.windows(2) {
         assert!(decimal(slice_2[1]) > decimal(slice_2[0]));
@@ -41,7 +38,6 @@ fn gt() {
 }
 
 #[test]
-#[ignore]
 fn lt() {
     for slice_2 in BIGS.windows(2) {
         assert!(decimal(slice_2[0]) < decimal(slice_2[1]));
@@ -49,22 +45,19 @@ fn lt() {
 }
 
 #[test]
-#[ignore]
 fn add() {
     assert_eq!(decimal("0.1") + decimal("0.2"), decimal("0.3"));
     assert_eq!(decimal(BIGS[0]) + decimal(BIGS[1]), decimal(BIGS[2]));
     assert_eq!(decimal(BIGS[1]) + decimal(BIGS[0]), decimal(BIGS[2]));
 }
-
+/*
 #[test]
-#[ignore]
 fn sub() {
     assert_eq!(decimal(BIGS[2]) - decimal(BIGS[1]), decimal(BIGS[0]));
     assert_eq!(decimal(BIGS[2]) - decimal(BIGS[0]), decimal(BIGS[1]));
 }
 
 #[test]
-#[ignore]
 fn mul() {
     for big in BIGS.iter() {
         assert_eq!(decimal(big) * decimal("2"), decimal(big) + decimal(big));
