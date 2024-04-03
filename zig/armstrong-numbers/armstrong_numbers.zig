@@ -1,5 +1,4 @@
 const std = @import("std");
-const log = std.debug;
 
 pub fn isArmstrongNumber(num: u128) bool {
     var general_purpose_allocator = std.heap.GeneralPurposeAllocator(.{}){};
@@ -10,7 +9,7 @@ pub fn isArmstrongNumber(num: u128) bool {
     var sum: u128 = 0;
     for (num_str) |c| {
         const digit = c - '0';
-        sum += std.math.pow(u128, digit, length);
+        sum += std.math.powi(u128, digit, length) catch unreachable;
     }
 
     return num == sum;
