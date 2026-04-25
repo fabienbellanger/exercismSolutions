@@ -19,8 +19,6 @@ impl Decimal {
         }
 
         let mut number = Decimal::default();
-
-        // Remove zeros at the end
         let mut input = input.to_string();
 
         // Find sign
