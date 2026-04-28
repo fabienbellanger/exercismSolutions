@@ -2,12 +2,11 @@ package collatzconjecture
 
 import "errors"
 
-func CollatzConjecture(n int) (int, error) {
+func CollatzConjecture(n int) (steps int, err error) {
 	if n == 0 {
 		return 0, errors.New("n is not a Collatz Conjecture")
 	}
 
-	steps := 0
 	for n != 1 {
 		if n%2 == 0 {
 			n /= 2
@@ -22,5 +21,5 @@ func CollatzConjecture(n int) (int, error) {
 		steps++
 	}
 
-	return steps, nil
+	return
 }
